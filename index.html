@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bruno Gael - Mi Autobiografía</title>
+    <!-- Google Fonts: Inter para texto general, Bebas Neue y Orbitron para títulos, Space Mono para tiempos -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración de Tailwind para usar colores y fuentes personalizadas
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        bebas: ['"Bebas Neue"', 'sans-serif'], // Nombre de la fuente para encabezados
+                        orbitron: ['Orbitron', 'sans-serif'], // Nueva fuente para el título principal
+                        mono: ['"Space Mono"', 'monospace'], // Fuente monoespaciada para tiempos
+                    },
+                    colors: {
+                        'neon-blue': '#00ffff', // Color azul neón personalizado
+                        'neon-purple': '#ff00ff', // Color púrpura neón personalizado
+                    },
+                    textShadow: { // Utilidad de sombra de texto personalizada (para fallback si no se usa glow)
+                        'md': '2px 2px #000',
+                    },
+                    boxShadow: { // Sombras personalizadas para un efecto de neón más intenso
+                        'neon-glow': '0 0 10px rgba(0, 255, 255, 0.7), 0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2)',
+                        'neon-glow-purple': '0 0 10px rgba(255, 0, 255, 0.7), 0 0 20px rgba(255, 0, 255, 0.4), 0 0 30px rgba(255, 0, 255, 0.2)',
+                        // Sombra más intensa para las secciones
+                        'neon-section': '0 0 15px rgba(0, 255, 255, 0.5), 0 0 30px rgba(255, 0, 255, 0.3), 0 0 45px rgba(255, 0, 255, 0.1)',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        // Keyframes para el brillo animado del título (más pronunciado)
+                        neonFlicker: {
+                            '0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%': {
+                                textShadow: '0 0 7px #00ffff, 0 0 15px #00ffff, 0 0 30px #00ffff, 0 0 60px #ff00ff, 0 0 90px #ff00ff, 0 0 100px #ff00ff, 0 0 120px #ff00ff',
+                                filter: 'brightness(1.5) contrast(1.2)'
+                            },
+                            '20%, 24%, 55%': {
+                                textShadow: 'none',
+                                filter: 'brightness(1) contrast(1)'
+                            }
+                        }
+                    },
+                    animation: {
+                        fadeIn: 'fadeIn 0.5s ease-out forwards',
+                        neonFlicker: 'neonFlicker 2s ease-in-out infinite alternate', // Ajustado a 2s para un parpadeo más notorio
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados para la utilidad de sombra de texto */
+        .text-shadow-md {
+            text-shadow: 2px 2px #000;
+        }
+
+        /* Estilos para el reproductor de audio fijo (movido a la esquina inferior derecha) */
+        .audio-player {
+            position: fixed;
+            bottom: 20px; /* Separado del borde inferior */
+            right: 20px;  /* Separado del borde derecho */
+            z-index: 1000; /* Asegura que esté por encima de todo */
+        }
+
+        /* Estilos personalizados para la barra de progreso (input type="range") */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent; /* Elimina el fondo por defecto */
+            cursor: pointer;
+        }
+
+        /* Estilo del track (la línea de la barra) para Webkit (Chrome, Safari, Edge) */
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px; /* Grosor de la barra */
+            background: #4a4a4a; /* Color del track */
+            border-radius: 3px;
+        }
+
+        /* Estilo del track para Firefox */
+        input[type="range"]::-moz-range-track {
+            width: 100%;
+            height: 6px;
+            background: #4a4a4a;
+            border-radius: 3px;
+        }
+
+        /* Estilo del thumb (el "círculo" que se arrastra) para Webkit */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px; /* Tamaño del thumb */
+            height: 18px;
+            background-color: #00ffff; /* Color neón del thumb */
+            border-radius: 50%; /* Forma circular */
+            margin-top: -6px; /* Ajusta para centrar el thumb en el track */
+            box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.4); /* Efecto de brillo neón */
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        /* Estilo del thumb para Firefox */
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background-color: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.4);
+            transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        /* Color del ícono de play/pause para que contraste con el botón neón */
+        .play-pause-icon {
+            fill: black;
+        }
+
+        /* Estilo para el brillo de los h2 de las secciones */
+        .section-h2-glow {
+            /* Brillo más intenso para los títulos de sección */
+            text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff00ff, 0 0 25px rgba(255, 0, 255, 0.6);
+            filter: brightness(1.2); /* Un poco más de brillo para los h2 */
+        }
+
+        /* Fondo degradado sobre la imagen de fondo */
+        .body-overlay {
+            /* Degradado más complejo para un mejor efecto */
+            background-image: linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 50%, rgba(0,0,0,0.95) 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Asegura que esté detrás del contenido */
+        }
+
+        /* Estilos para las secciones que se animan al hacer scroll */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(30px); /* Un poco más de desplazamiento inicial */
+            transition: opacity 0.9s ease-out, transform 0.9s ease-out, box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out; /* Transiciones más largas */
+            position: relative; /* Para el pseudo-elemento */
+            overflow: hidden; /* Para que la textura no se salga */
+        }
+
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pseudo-elemento para la textura urbana en las secciones */
+        .animated-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); /* Textura sutil de "polvo estelar" */
+            opacity: 0.12; /* Ajusta para la sutileza, un poco más visible */
+            pointer-events: none; /* Permite que los clics pasen a través */
+            border-radius: inherit; /* Hereda el border-radius de la sección */
+            z-index: -1; /* Colócalo detrás del contenido pero encima del fondo de la sección */
+        }
+
+        /* Efecto de filtro al pasar el mouse sobre secciones y videos */
+        .animated-section:hover, .video-box:hover, .media img:hover {
+            filter: brightness(1.25) saturate(1.25); /* Aumenta más el brillo y la saturación */
+            transform: translateY(-8px) scale(1.02); /* Más levantamiento y escala */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.6), 0 0 60px rgba(255, 0, 255, 0.4); /* Sombra más fuerte */
+        }
+
+
+        /* Estilos para el botón de "Volver Arriba" */
+        #backToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff00ff; /* Púrpura neón */
+            color: black;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.6), 0 0 30px rgba(255, 0, 255, 0.3);
+            transition: all 0.3s ease-in-out;
+            z-index: 999;
+            opacity: 0; /* Inicialmente oculto */
+        }
+
+        #backToTopBtn:hover {
+            background-color: #00ffff; /* Cambia a azul neón al pasar el mouse */
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.3);
+            transform: translateY(-10px) scale(1.15); /* Más levantamiento y escala */
+        }
+        #backToTopBtn.animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Estilos para el encabezado fijo de navegación */
+        .fixed-header {
+            position: sticky; /* Sticky para que se quede en la parte superior */
+            top: 0;
+            z-index: 900; /* Debajo del reproductor de audio, pero encima del contenido */
+            width: 100%;
+        }
+
+        /* Padding superior para que el contenido no quede debajo del header fijo */
+        body {
+            padding-top: 100px; /* Ajusta este valor según la altura de tu header */
+        }
+        /* Media query para ajustar el padding del body en pantallas pequeñas si el header es más grande */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 140px; /* Incrementa si la navegación se apila */
+            }
+        }
+    </style>
+</head>
+<body class="bg-cover bg-center bg-fixed text-white font-inter" style="background-image: url('https://cdn.vectorstock.com/i/1000v/23/44/rap-music-hip-hop-seamless-background-vector-37722344.jpg');">
+
+    <!-- Capa de superposición para mejorar el contraste y el diseño -->
+    <div class="body-overlay"></div>
+
+    <!-- REPRODUCTOR DE AUDIO PERSONALIZADO (Ahora en la esquina inferior derecha) -->
+    <div class="audio-player bg-gray-900 bg-opacity-90 border-2 border-neon-blue shadow-lg shadow-neon-blue/40 rounded-xl p-3 max-w-sm md:max-w-md">
+        <div class="flex items-center">
+            <!-- Botón de Play/Pause -->
+            <button id="playPauseBtn" class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-full bg-neon-blue text-black focus:outline-none hover:scale-105 transition-transform duration-200 transform active:scale-95 shadow-md">
+                <!-- Ícono de Play (visible por defecto) -->
+                <svg id="playIcon" class="w-6 h-6 play-pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <!-- Ícono de Pause (oculto por defecto) -->
+                <svg id="pauseIcon" class="w-6 h-6 play-pause-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16"></rect>
+                    <rect x="14" y="4" width="4" height="16"></rect>
+                </svg>
+            </button>
+
+            <!-- Barra de Progreso y Tiempos -->
+            <div class="flex-grow mx-3 flex flex-col justify-center">
+                <input type="range" id="progressBar" value="0" class="w-full h-2 bg-gray-700 rounded-lg">
+                <div class="flex justify-between text-xs text-gray-400 mt-1 font-mono">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <!-- Control de Volumen -->
+            <div class="flex items-center ml-3 flex-shrink-0">
+                <!-- Ícono de Volumen -->
+                <svg class="w-5 h-5 text-gray-300 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <!-- Barra de Volumen -->
+                <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="0.5" class="w-20 h-2 bg-gray-700 rounded-lg">
+            </div>
+        </div>
+        <!-- Elemento de Audio (oculto, solo para la lógica) -->
+        <audio id="audioSource" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+    </div>
+
+    <!-- Encabezado Fijo con Navegación -->
+    <header class="fixed-header bg-black bg-opacity-90 py-4 text-center shadow-lg shadow-neon-purple/40">
+        <nav class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <!-- Título del sitio, con animación de brillo neón -->
+            <h1 class="text-3xl md:text-4xl font-orbitron text-neon-blue header-title-glow m-0 mb-3 md:mb-0">Bruno Gael Fragoso Guevara</h1>
+            <!-- Lista de enlaces de navegación -->
+            <ul class="flex flex-wrap justify-center gap-6 text-lg"> <!-- Aumentado el gap a gap-6 -->
+                <li><a href="#historia" class="nav-link text-neon-purple hover:text-neon-blue transition-colors duration-200 px-4 py-2 rounded-lg border-2 border-neon-purple hover:border-neon-blue shadow-md hover:shadow-neon-glow-purple hover:scale-105 active:scale-95">Mi Historia</a></li>
+                <li><a href="#deporte" class="nav-link text-neon-purple hover:text-neon-blue transition-colors duration-200 px-4 py-2 rounded-lg border-2 border-neon-purple hover:border-neon-blue shadow-md hover:shadow-neon-glow-purple hover:scale-105 active:scale-95">Mi Camino Deportivo</a></li>
+                <li><a href="#gustos" class="nav-link text-neon-purple hover:text-neon-blue transition-colors duration-200 px-4 py-2 rounded-lg border-2 border-neon-purple hover:border-neon-blue shadow-md hover:shadow-neon-glow-purple hover:scale-105 active:scale-95">Pasatiempos y Gustos</a></li>
+                <li><a href="#galeria" class="nav-link text-neon-purple hover:text-neon-blue transition-colors duration-200 px-4 py-2 rounded-lg border-2 border-neon-purple hover:border-neon-blue shadow-md hover:shadow-neon-glow-purple hover:scale-105 active:scale-95">Galería Urbana</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4">
+        <!-- Sección: Mi historia -->
+        <section id="historia" class="animated-section bg-black bg-opacity-70 mx-auto my-10 p-8 max-w-3xl md:max-w-4xl rounded-2xl border-2 border-neon-blue shadow-neon-section transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative">
+            <h2 class="text-3xl font-semibold text-neon-purple border-l-4 border-neon-blue pl-4 mb-5 section-h2-glow">Mi historia</h2>
+            <p class="text-lg leading-relaxed text-justify mb-4">Nací en la <strong>Ciudad de México</strong> y viví en <strong>Ecatepec</strong> la mayor parte de mi infancia. Actualmente resido en <strong>Azcapotzalco</strong>. Desde siempre he sido apasionado por el <strong>deporte</strong> y por descubrir nuevas formas de expresión personal, lo que me ha llevado a explorar diversos caminos.</p>
+            <p class="text-lg leading-relaxed text-justify mb-4">Mi formación académica me llevó por la <strong>Primaria José María Velasco</strong> y la <strong>Secundaria Técnica 142</strong>. Posteriormente, inicié mi educación preparatoria en el <strong>Epo 115</strong>. Durante este periodo, enfrenté algunos desafíos académicos que me llevaron a tener que cursar materias adicionales. Sin embargo, este fue un punto de inflexión. Con **gran esfuerzo y dedicación**, logré superar esos obstáculos, mejorar significativamente mi rendimiento y reafirmar mi compromiso con el estudio. Esta experiencia me enseñó el valor inquebrantable de la **resiliencia** y la **perseverancia**, lecciones fundamentales que aplico en todos los aspectos de mi vida.</p>
+            <p class="text-lg leading-relaxed text-justify">Actualmente, me encuentro en el último semestre de la preparatoria, con la mira puesta en mi futuro profesional. Mi objetivo es estudiar <strong>Negocios Internacionales</strong>, una carrera que considero me permitirá aplicar mi pasión por la estrategia y la resolución de problemas en un entorno global y dinámico.</p>
+        </section>
+
+        <!-- Separador de Porro -->
+        <div class="block mx-auto my-10 w-full max-w-xs md:max-w-sm lg:max-w-md">
+            <svg viewBox="0 0 250 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="block w-full h-auto">
+                <path d="M5 15 C 20 5, 230 5, 245 15 C 230 25, 20 25, 5 15 Z" fill="url(#gradientJoint)" stroke="url(#gradientJoint)" stroke-width="2"/>
+                <defs>
+                    <linearGradient id="gradientJoint" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ff00ff" /> <!-- Neon Purple -->
+                        <stop offset="100%" stop-color="#00ffff" /> <!-- Neon Blue -->
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Sección: Mi camino deportivo -->
+        <section id="deporte" class="animated-section bg-black bg-opacity-70 mx-auto my-10 p-8 max-w-3xl md:max-w-4xl rounded-2xl border-2 border-neon-blue shadow-neon-section transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative">
+            <h2 class="text-3xl font-semibold text-neon-purple border-l-4 border-neon-blue pl-4 mb-5 section-h2-glow">Mi camino deportivo</h2>
+            <p class="text-lg leading-relaxed text-justify mb-4">Mi recorrido deportivo es un fiel reflejo de mi búsqueda constante de disciplina, superación y el dominio de nuevas habilidades. Comencé mi trayectoria con el <strong>fútbol</strong>, donde no solo desarrollé mi condición física, sino que también aprendí el valor del trabajo en equipo y la estrategia colectiva.</p>
+            <p class="text-lg leading-relaxed text-justify mb-4">Posteriormente, exploré las artes marciales con el <strong>kickboxing</strong>, una disciplina que me enseñó la importancia de la fuerza, la agilidad y el autocontrol. El <strong>gimnasio</strong> se convirtió en un pilar para mi desarrollo físico, complementando mi entrenamiento. También tuve un paso por el <strong>básquetbol</strong>, que me brindó una perspectiva diferente sobre la coordinación y la táctica rápida. Sin embargo, fue el **boxeo** lo que realmente encendió una pasión profunda en mí.</p>
+            <p class="text-lg leading-relaxed text-justify">Me atrajo su exigencia mental y física, sintiendo una conexión única con el ring y la disciplina que conlleva. A los 15 años, mi entusiasmo era tal que consideré seriamente dedicarme al boxeo profesional. Aunque mi familia, preocupada por mi bienestar, me apoyó en tomarlo como un <strong>hobbie</strong>, esta decisión me permitió seguir disfrutando de este deporte sin la intensa presión de la competición a gran escala. Además, también practiqué <strong>natación</strong>, una actividad que me proporcionó una disciplina diferente y fortaleció mi resistencia cardiovascular de manera integral.</p>
+        </section>
+
+        <!-- Separador de Porro -->
+        <div class="block mx-auto my-10 w-full max-w-xs md:max-w-sm lg:max-w-md">
+            <svg viewBox="0 0 250 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="block w-full h-auto">
+                <path d="M5 15 C 20 5, 230 5, 245 15 C 230 25, 20 25, 5 15 Z" fill="url(#gradientJoint)" stroke="url(#gradientJoint)" stroke-width="2"/>
+                <defs>
+                    <linearGradient id="gradientJoint" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ff00ff" /> <!-- Neon Purple -->
+                        <stop offset="100%" stop-color="#00ffff" /> <!-- Neon Blue -->
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Sección: Pasatiempos y gustos -->
+        <section id="gustos" class="animated-section bg-black bg-opacity-70 mx-auto my-10 p-8 max-w-3xl md:max-w-4xl rounded-2xl border-2 border-neon-blue shadow-neon-section transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative">
+            <h2 class="text-3xl font-semibold text-neon-purple border-l-4 border-neon-blue pl-4 mb-5 section-h2-glow">Pasatiempos y gustos</h2>
+            <p class="text-lg leading-relaxed text-justify mb-4">Fuera de los deportes, mi creatividad y mi identidad cultural se desbordan en el mundo del **graffiti** y todo el arte urbano. Me fascina profundamente cómo las calles se transforman en vibrantes galerías a cielo abierto, llenas de color, mensajes y expresiones que capturan la esencia de la ciudad y sus habitantes.</p>
+            <p class="text-lg leading-relaxed text-justify mb-4">La cultura del **hip-hop** es otra de mis grandes pasiones, no solo por la energía inconfundible de sus ritmos y la profundidad de sus letras, sino también por la forma en que este género permite contar historias y transmitir emociones auténticas. Disfruto tanto escucharlo, sumergiéndome en sus narrativas, como **componer música** propia de vez en cuando, explorando rimas y beats que reflejan mis propias vivencias y pensamientos.</p>
+            <p class="text-lg leading-relaxed text-justify">En cuanto a los videojuegos, soy un gran fan de las narrativas épicas, la acción intensa y las aventuras inmersivas. Por eso, mis favoritos son sagas como <em>God of War</em>, con su mitología fascinante, y <em>Uncharted</em>, que me sumergen en mundos llenos de exploración y tesoros. Y para recargar energías después de cualquier actividad, no hay nada como unas buenas **milanesas**, un clásico reconfortante que disfruto mucho, acompañadas siempre de un refrescante y revitalizante **zumo de piña**.</p>
+        </section>
+
+        <!-- Separador de Porro -->
+        <div class="block mx-auto my-10 w-full max-w-xs md:max-w-sm lg:max-w-md">
+            <svg viewBox="0 0 250 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="block w-full h-auto">
+                <path d="M5 15 C 20 5, 230 5, 245 15 C 230 25, 20 25, 5 15 Z" fill="url(#gradientJoint)" stroke="url(#gradientJoint)" stroke-width="2"/>
+                <defs>
+                    <linearGradient id="gradientJoint" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#ff00ff" /> <!-- Neon Purple -->
+                        <stop offset="100%" stop-color="#00ffff" /> <!-- Neon Blue -->
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Sección: Galería urbana (con imágenes y videos) -->
+        <section id="galeria" class="animated-section bg-black bg-opacity-70 mx-auto my-10 p-8 max-w-3xl md:max-w-4xl rounded-2xl border-2 border-neon-blue shadow-neon-section transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative media">
+            <h2 class="text-3xl font-semibold text-neon-purple border-l-4 border-neon-blue pl-4 mb-5 section-h2-glow">Galería urbana</h2>
+            <!-- Contenedor flex para las imágenes, para que se muestren de forma responsiva -->
+            <div class="flex flex-col md:flex-row justify-center items-start gap-8 mt-5 mb-10">
+                <img src="https://scontent.fmex1-1.fna.fbcdn.net/v/t39.30808-6/475119993_1916859795507329_2332214725942606860_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=110&ccb=1-7&_nc_sid=fe5ecc&_nc_ohc=RT_nRUWKh1YQ7kNvwFjOqIB&_nc_oc=AdliYG0WJeg0_7iFm9JuM9otE2UUbVV12oN85YduKNepd7Jug3nyhE4vC2WBn2FTVwY&_nc_zt=23&_nc_ht=scontent.fmex1-1.fna&_nc_gid=afHKq2-zPNrVZ-c7yHLArA&oh=00_AfMgdTZAE-JY647yJZ6T5O7hOlxVu8sHc01UEw7JAVdUAA&oe=684D4CE5" alt="Arte urbano en una pared" class="block mx-auto max-w-full rounded-xl border-4 border-neon-blue shadow-md shadow-neon-blue/40 transition-all duration-300 hover:scale-105 hover:shadow-neon-glow w-full md:w-1/3">
+                <!-- IMAGEN ACTUALIZADA -->
+                <img src="https://i.pinimg.com/474x/04/4c/34/044c3480cd165f5f30114626a4ba60fa.jpg" alt="Diseño gráfico abstracto" class="block mx-auto max-w-full rounded-xl border-4 border-neon-blue shadow-md shadow-neon-blue/40 transition-all duration-300 hover:scale-105 hover:shadow-neon-glow w-full md:w-1/3">
+                <img src="https://scontent.fmex1-6.fna.fbcdn.net/v/t39.30808-6/473830932_1913176899208952_8040763720429188986_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=111&ccb=1-7&_nc_sid=fe5ecc&_nc_ohc=xu_fZpDdmv4Q7kNvwF62Yqa&_nc_oc=Adnj2Z1kX3sqayAfdrRH5qYVE0PDnnfzjZz_pIj3exyWm9dEw-JtjAgpeo7hTH9HfQA&_nc_zt=23&_nc_ht=scontent.fmex1-6.fna&_nc_gid=2IkGrYsGk5hit8kYL9ukeA&oh=00_AfP4nQsdwJVGjqpH6emH-DGggaAQl-VfrGGIBrCmzHGCPA&oe=684D6B7E" alt="Graffiti colorido en la ciudad" class="block mx-auto max-w-full rounded-xl border-4 border-neon-blue shadow-md shadow-neon-blue/40 transition-all duration-300 hover:scale-105 hover:shadow-neon-glow w-full md:w-1/3">
+            </div>
+
+            <!-- Contenedor flex para los videos, para que se muestren uno al lado del otro en pantallas grandes -->
+            <div class="flex flex-col md:flex-row justify-center items-start gap-8 mt-10">
+                <!-- Primer Video de YouTube -->
+                <div class="bg-black bg-opacity-80 p-5 border-2 border-neon-blue rounded-2xl w-full md:w-1/2 shadow-neon-section text-center transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative video-box">
+                    <h3 class="text-2xl font-semibold mb-4 text-neon-blue">Un video que me gusta</h3>
+                    <!-- Contenedor responsivo para el video de YouTube -->
+                    <div class="relative w-full pb-[56.25%] h-0"> <!-- Proporción de aspecto 16:9 (altura es 56.25% del ancho) -->
+                        <iframe class="absolute top-0 left-0 w-full h-full rounded-xl border-4 border-neon-blue"
+                            src="https://www.youtube.com/embed/iX_0FNCMHOM?si=IJ91zCKqDlxqsUQq"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Segundo Video de YouTube -->
+                <div class="bg-black bg-opacity-80 p-5 border-2 border-neon-blue rounded-2xl w-full md:w-1/2 shadow-neon-section text-center transition-all duration-300 hover:shadow-neon-glow-purple hover:scale-101 hover:z-10 relative video-box">
+                    <h3 class="text-2xl font-semibold mb-4 text-neon-blue">Otro video que me gusta</h3>
+                    <!-- Contenedor responsivo para el segundo video de YouTube -->
+                    <div class="relative w-full pb-[56.25%] h-0"> <!-- Proporción de aspecto 16:9 (altura es 56.25% del ancho) -->
+                        <iframe class="absolute top-0 left-0 w-full h-full rounded-xl border-4 border-neon-blue"
+                            src="https://www.youtube.com/embed/0moy6LPDR8o?si=201Z6sDZIkHy-yVj"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-black bg-opacity-80 text-center py-5 text-sm text-gray-400 border-t-2 border-neon-purple shadow-lg shadow-neon-purple/40">
+        © 2025 Bruno Gael Fragoso Guevara | “Expreso mi historia con puños, versos y color”
+    </footer>
+
+    <!-- Botón de "Volver Arriba" -->
+    <button id="backToTopBtn" class="hidden">
+        &#9650; <!-- Flecha hacia arriba -->
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Obtener referencias a los elementos del DOM del reproductor de audio
+            const audio = document.getElementById('audioSource');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+            const progressBar = document.getElementById('progressBar');
+            const currentTimeSpan = document.getElementById('currentTime');
+            const durationSpan = document.getElementById('duration');
+            const volumeBar = document.getElementById('volumeBar');
+
+            let isPlaying = false; // Variable para controlar el estado de reproducción
+
+            // Función para formatear el tiempo en minutos:segundos
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+
+            // Event Listener para el botón de Play/Pause
+            playPauseBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    playIcon.classList.remove('hidden'); // Muestra el ícono de play
+                    pauseIcon.classList.add('hidden');    // Oculta el ícono de pause
+                } else {
+                    audio.play();
+                    playIcon.classList.add('hidden');     // Oculta el ícono de play
+                    pauseIcon.classList.remove('hidden'); // Muestra el ícono de pause
+                }
+                isPlaying = !isPlaying; // Invierte el estado de reproducción
+            });
+
+            // Event Listener para actualizar la barra de progreso y el tiempo actual
+            audio.addEventListener('timeupdate', () => {
+                // Calcula el porcentaje de la canción reproducida
+                if (audio.duration) { // Asegúrate de que la duración esté disponible
+                    progressBar.value = (audio.currentTime / audio.duration) * 100;
+                }
+                // Actualiza el texto del tiempo actual
+                currentTimeSpan.textContent = formatTime(audio.currentTime);
+            });
+
+            // Event Listener para establecer la duración total de la canción una vez que los metadatos se cargan
+            audio.addEventListener('loadedmetadata', () => {
+                durationSpan.textContent = formatTime(audio.duration);
+            });
+
+            // Event Listener para "buscar" en la canción cuando el usuario mueve la barra de progreso
+            progressBar.addEventListener('input', () => {
+                // Calcula el tiempo de la canción basándose en la posición de la barra de progreso
+                const seekTime = (progressBar.value / 100) * audio.duration;
+                audio.currentTime = seekTime; // Establece el tiempo actual del audio
+            });
+
+            // Event Listener para el control de volumen
+            volumeBar.addEventListener('input', () => {
+                audio.volume = volumeBar.value; // Establece el volumen del audio
+            });
+
+            // Event Listener para cuando la canción termina
+            audio.addEventListener('ended', () => {
+                isPlaying = false;
+                playIcon.classList.remove('hidden'); // Muestra el ícono de play
+                pauseIcon.classList.add('hidden');    // Oculta el ícono de pause
+                progressBar.value = 0;                // Reinicia la barra de progreso
+                currentTimeSpan.textContent = '0:00'; // Reinicia el tiempo actual
+            });
+
+            // --- Lógica de Intersección Observer para Animaciones al Desplazarse ---
+            const sections = document.querySelectorAll('.animated-section');
+
+            const observerOptions = {
+                root: null, // El viewport es el elemento raíz
+                rootMargin: '0px',
+                threshold: 0.1 // El callback se ejecutará cuando el 10% de la sección sea visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Si la sección está visible, añade la clase para animarla
+                        entry.target.classList.add('is-visible');
+                        // No detengas la observación si quieres que se repita la animación al volver a ser visible
+                        // observer.unobserve(entry.target);
+                    } else {
+                        // Opcional: remover la clase si la sección ya no está visible para que la animación se repita al volver
+                        entry.target.classList.remove('is-visible');
+                    }
+                });
+            }, observerOptions);
+
+            // Observa cada sección
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Lógica del Botón "Volver Arriba" ---
+            const backToTopBtn = document.getElementById('backToTopBtn');
+
+            // Muestra u oculta el botón basado en el scroll
+            window.addEventListener('scroll', () => {
+                // Ajusta el offset para que no se superponga con el reproductor de música si está presente
+                const offset = audio ? audio.offsetHeight + 40 : 300; // Si hay audio, un poco más arriba
+                if (window.scrollY > offset) {
+                    backToTopBtn.classList.remove('hidden');
+                    backToTopBtn.classList.add('animate-fadeIn');
+                } else {
+                    backToTopBtn.classList.add('hidden');
+                    backToTopBtn.classList.remove('animate-fadeIn');
+                }
+            });
+
+            // Al hacer clic en el botón, desplázate suavemente hacia arriba
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // --- Lógica para la Navegación de Scroll Suave ---
+            document.querySelectorAll('.nav-link').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault(); // Previene el comportamiento por defecto del ancla
+
+                    const targetId = this.getAttribute('href'); // Obtiene el ID del destino (ej. '#historia')
+                    const targetElement = document.querySelector(targetId); // Encuentra el elemento destino
+                    const headerOffset = document.querySelector('.fixed-header').offsetHeight; // Altura del encabezado fijo
+                    // Ajusta el padding superior del body para que el contenido no quede debajo del header fijo
+                    // Esto se hace en CSS, pero se puede ajustar con JS si es necesario un cálculo dinámico más preciso
+                    const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset; // Posición absoluta del elemento
+
+                    window.scrollTo({
+                        top: elementPosition - headerOffset - 20, // Ajusta con la altura del header y un margen extra
+                        behavior: 'smooth' // Desplazamiento suave
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
